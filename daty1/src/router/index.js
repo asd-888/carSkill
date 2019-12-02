@@ -2,7 +2,7 @@
  * @Author: 席鹏昊
  * @Date: 2019-11-29 19:30:44
  * @LastEditors: 席鹏昊
- * @LastEditTime: 2019-11-29 20:30:16
+ * @LastEditTime: 2019-12-01 19:46:51
  * @Description: 
  */
 import Vue from 'vue'
@@ -15,6 +15,10 @@ const routes = [
     path: '/',
     component:()=>import('../views/home.vue')
   },
+  {
+    path:"/details",
+    component:()=>import("../views/details.vue")
+  }
   // {
   //   path: '/about',
   //   name: 'about',

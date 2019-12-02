@@ -3,7 +3,7 @@ import { compileToFunctions } from 'vue-template-compiler';
  * @Author: 席鹏昊
  * @Date: 2019-11-29 19:45:23
  * @LastEditors: 席鹏昊
- * @LastEditTime: 2019-11-30 09:05:47
+ * @LastEditTime: 2019-11-30 21:12:55
  * @Description: 
  -->
 <template>
@@ -11,7 +11,7 @@ import { compileToFunctions } from 'vue-template-compiler';
     <p class="title">
       <b>{{data.title}}</b>
     </p>
-    <div class="content" v-for="(item,index) in data.children" :key="index">
+    <div class="content" v-for="(item,index) in data.children" :key="index" @click="balls(item)">
       <p>
         <img :src="item.CoverPhoto" alt />
       </p>
@@ -20,14 +20,20 @@ import { compileToFunctions } from 'vue-template-compiler';
   </div>
 </template>
 <script>
+// 111
 export default {
-  props: ["data"],
+  props: ["data","ball"],
   components: {},
   data() {
     return {};
   },
   computed: {},
-  methods: {},
+  methods: {
+      balls(item){
+
+        this.ball(item.MasterID,1)
+      }
+  },
   created() {},
   mounted() {}
 };

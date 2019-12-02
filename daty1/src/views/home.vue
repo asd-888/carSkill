@@ -2,32 +2,40 @@
  * @Author: 席鹏昊
  * @Date: 2019-11-29 19:40:09
  * @LastEditors: 席鹏昊
- * @LastEditTime: 2019-11-30 10:46:54
+ * @LastEditTime: 2019-12-01 20:52:25
  * @Description: 
  -->
 <template>
-  <div class="home">
+  <div class="home" ref="roll">
     <div class="roll">
-      <List v-for="(item,index) in data" :key="index" :data="item" :class="item.title"></List>
+      <List v-for="(item,index) in data" :key="index" :data="item" ref="A" :ball="ball"></List>
     </div>
     <div class="floor">
       <p>#</p>
-      <p v-for="(item,index) in data" :key="index" @click="to(item.title)">{{item.title}}</p>
+      <p v-for="(item,index) in data" :key="index" @click="to(index)">{{item.title}}</p>
+    </div>
+    <div :class="[isShow?'show':'shade']" class="box">
+      <PopUp v-for="(item,index) in classify " :key="index" :item="item" :backs=backs></PopUp>
     </div>
   </div>
 </template>
 <script>
 import List from "../components/list";
+import PopUp from "../components/popUp";
 import Axios from "axios";
 import BScroll from "better-scroll";
+import { Loading } from 'element-ui';
 export default {
   props: {},
   components: {
-    List
+    List,
+    PopUp
   },
   data() {
     return {
-      data: []
+      data: [],
+      isShow: false,
+      classify: {}
     };
   },
   computed: {},
@@ -58,29 +66,53 @@ export default {
       });
     },
     to(i) {
-      let wrapper = document.querySelector(".roll");
-      let title = document.querySelector(`.${i}`).offsetTop;
-      console.log(wrapper,title)
-        wrapper.scrollTop=title;
-        console.log(wrapper.scrollTop)
-     
+      let LH = this.$refs.A;
+      let el = LH[i].$el;
+      this.scroll.scrollToElement(el, 1000, 0, 0);
+    },
+    ball(id, i) {
+      Axios.get(
+        `https://baojia.chelun.com/v2-car-getMakeListByMasterBrandId.html?MasterID=${id}`
+      ).then(res => {
+        if (res.data.code === 1) {
+          this.classify = res.data.data;
+           
+        } else {
+          alert(res.data.msg);
+        }
+      });
+      this.isShow = true;
+    },
+    backs(){
+      this.isShow=false
     }
   },
   created() {
-    this.get();
-
+  this.loading=Loading.service(this.$refs.A);
+  this.get()
+   
   },
-  mounted() {}
+  mounted() {
+    this.$nextTick(() => {
+      this.scroll = new BScroll(this.$refs.roll, {
+        scrollbar: true,
+        click: true
+      }),
+      this.loading.close();
+    });
+   
+  }
 };
 </script>
 <style scoped lang="scss">
 .home {
   width: 100%;
   height: 100%;
+  position: relative;
 }
 .roll {
   width: 100%;
-  height:100% ;overflow-y: scroll;
+  height: auto;
 }
 .floor {
   position: fixed;
@@ -92,5 +124,25 @@ export default {
   p {
     line-height: 22px;
   }
+}
+.box {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 70%;
+  height: 100%;
+  background: #fff;
+  overflow-y: auto;
+}
+.shade {
+  transition-delay: 2s;
+  transition-duration: 1s;
+  transform: translateX(100%);
+}
+.show {
+  transition-delay: 2s;
+  transition-duration: 2s;
+  transition-timing-function: linear;
+  transform: translateX(0%);
 }
 </style>
